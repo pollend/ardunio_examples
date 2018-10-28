@@ -1,0 +1,42 @@
+# Create and initialize the environment.
+env = Environment()
+
+# Set environment for AVR-GCC.
+env['CC'] = 'avr-gcc'
+env['CXX'] = 'avr-g++'
+env['AS'] = 'avr-gcc'
+env['CPPPATH'] = ['/usr/avr/include/', 'build']
+env['OBJCOPY'] = 'avr-objcopy'
+env['SIZE'] = 'avr-size'
+env.Append(CCFLAGS = '-Os -Wall -Werror -flto')
+
+# Declare some variables about microcontroller.
+# Microcontroller type.
+DEVICE = 'attiny85'
+# Microcontroller frequency.
+CPU_FREQUENCY = '8000000UL' # Hz
+
+# Set environment for an Atmel AVR Atmega 328p microcontroller.
+# Create and initialize the environment.
+env.Append(CCFLAGS = '-mmcu=' + DEVICE)
+env.Append(CXXFLAGS = '-Wno-class-memaccess')
+env.Append(LINKFLAGS = '-mmcu=' + DEVICE)
+env.Append(LINKFLAGS = '-Wl,-u,vfprintf -lprintf_min')
+env.Append(LINKFLAGS = '-lm')
+env.Append(CPPDEFINES = 'F_CPU=' + CPU_FREQUENCY)
+
+# Define target name.
+TARGET = 'build/main'
+
+# Build the program.
+# Default() is used so that when running scons only sources are
+# compiled and linked- no other commands (see below) are run
+
+Default(env.Program(target = TARGET + '.elf', source = ['blink.cpp']))
+
+# Create hex binary file.
+Default(env.Command(TARGET + '.hex', TARGET + '.elf', env['OBJCOPY'] + ' -O ihex $SOURCE $TARGET'))
+
+# Compute memory usage.
+Default(env.Command(None, TARGET + '.elf', env['SIZE'] + ' -C --mcu=' + DEVICE + ' $SOURCE'))
+Default(env.Command(None, None, 'ctags -R -f src/.tags src'))
