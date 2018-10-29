@@ -8,6 +8,7 @@ env['AS'] = 'avr-gcc'
 env['CPPPATH'] = ['/usr/avr/include/', 'build']
 env['OBJCOPY'] = 'avr-objcopy'
 env['SIZE'] = 'avr-size'
+env.Append(CCFLAGS = '-Os -Wall -Werror')
 
 # Declare some variables about microcontroller.
 # Microcontroller type.
@@ -17,8 +18,11 @@ CPU_FREQUENCY = '1000000UL' # Hz
 
 # Set environment for an Atmel AVR Atmega 328p microcontroller.
 # Create and initialize the environment.
-env.Append(CCFLAGS = '-Wall -Os -mmcu=' + DEVICE)
+env.Append(CCFLAGS = '-mmcu=' + DEVICE)
+env.Append(CXXFLAGS = '-Wno-class-memaccess')
 env.Append(LINKFLAGS = '-mmcu=' + DEVICE)
+env.Append(LINKFLAGS = '-Wl,-u,vfprintf -lprintf_min')
+env.Append(LINKFLAGS = '-lm')
 env.Append(CPPDEFINES = 'F_CPU=' + CPU_FREQUENCY)
 
 # Define target name.
