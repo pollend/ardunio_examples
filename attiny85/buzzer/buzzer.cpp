@@ -2,14 +2,13 @@
 #include <util/delay.h>
 
 #define HERTZ 220.0f
+#define OCTIVE  4
 
 int main(void){
     DDRB = (1 << PB3);
+    GTCCR = 0x90 | (8 - OCTIVE);
+    OCR1B = HERTZ - 1
     while(1){
-        PORTB = (1 << PB3);
-        _delay_ms((1.0f/HERTZ) * 1000.0f);
-        PORTB = 0x00;
-        _delay_ms((1.0f/HERTZ) * 1000.0f);
     }
     return 1;
 }
